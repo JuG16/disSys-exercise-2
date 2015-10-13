@@ -1,6 +1,7 @@
-package jgiger.a2.vs.inf.ethz.ch.vs_jgiger_webservices;
+package ch.ethz.inf.vs.a2.vsjgigerwebservices;
 
-import jgiger.a2.vs.inf.ethz.ch.vs_jgiger_webservices.http.HttpRawRequest;
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.http.HttpRawRequest;
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.http.RemoteServerConfiguration;
 
 /**
  * Created by Andreas on 10.10.2015.
@@ -12,20 +13,20 @@ public class HttpRawRequestImpl implements HttpRawRequest {
     // in order to get the temperature info, so i assume we should take the first part as the host, and 8081 as the port
 
     private int port;
-    String host, path;
+    private String host, path;
 
     @Override
     public String generateRequest() {
         String httpRequestHeader = "GET "+getPath()+" HTTP/1.1\r\n";
-        httpRequestHeader = httpRequestHeader + "Host: " + getHost()+":" + getPort()+"/sunspots/Spot1/sensors/temperature"+"\r\n";
+        httpRequestHeader = httpRequestHeader + "Host: " + getHost()+":" + getPort()+"\r\n";
         httpRequestHeader = httpRequestHeader + "Connection: close\r\n\r\n"; // connection is closed after completion
         return httpRequestHeader;
     }
 
     private String getPath() {
-        if(path != null)
+        if(path != null || path.length() == 0)
             return path;
-        return"/";
+        return RemoteServerConfiguration.PATH;
     }
 
 
@@ -37,15 +38,15 @@ public class HttpRawRequestImpl implements HttpRawRequest {
 
     @Override
     public String getHost() {
-        if(host != null)
+        if(host != null || host.length() != 0)
             return host;
-        return "http://vslab.inf.ethz.ch";
+        return RemoteServerConfiguration.HOST;
     }
 
     @Override
     public int getPort() {
         if(port != 0)
             return port;
-        return 8081;
+        return RemoteServerConfiguration.REST_PORT;
     }
 }
