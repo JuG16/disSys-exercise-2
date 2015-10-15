@@ -1,0 +1,93 @@
+package ch.ethz.inf.vs.a2.vsjgigerwebservices.skeleton;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.MainActivity;
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.R;
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.sensor.Sensor;
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.sensor.SensorFactory;
+import ch.ethz.inf.vs.a2.vsjgigerwebservices.sensor.SensorListener;
+
+public class SoapActivity extends ActionBarActivity implements SensorListener {
+
+    private final static String LOG_TAG = "RestClient";
+    private TextView textView;
+    private Sensor sensor;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_soap);
+        textView = (TextView) findViewById(R.id.rest_client_textview);
+        textView.setText("Temperature Value: ");
+
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        Intent intent = getIntent();
+        String sensorType = intent.getStringExtra(MainActivity.SENSOR_TYPE);
+
+        if (networkInfo != null && networkInfo.isConnected()) {
+
+            // device is online
+            sensor = SensorFactory.getInstance(SensorFactory.Type.valueOf(sensorType));
+            if(sensor != null) {
+                sensor.registerListener(this); // hope it works and sensor is not null
+                sensor.getTemperature(); // probable that in here somewhere there is an error
+
+                Toast.makeText(this, "it's nicea", Toast.LENGTH_SHORT).show(); // at this point i'd be pretty happy
+
+            } else
+                Toast.makeText(this,"well shit..", Toast.LENGTH_SHORT).show(); // something failed
+        } else {
+            // device is offline
+            Log.e(LOG_TAG, "No internet connection");
+            Toast.makeText(this, R.string.no_internet, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_soap, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onReceiveDouble(double value) {
+        textView.setText("Got Temperature! Value: "+ value + "\n");
+    }
+
+    @Override
+    public void onReceiveString(String message) {
+        textView.setText("onRecieveString, mit message: "+message);
+    }
+}
