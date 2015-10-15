@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">VS jgiger Webservices</string>
+    <string name="task1">Http Raw Request</string>
+    <string name="task2">Http library</string>
+    <string name="task3">Json</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="title_activity_rest_client">Rest Client Sensor</string>
+    <string name="general_temperature_error_message">An Error occurred while trying to retrieve the Temperature Value. Please try again</string>
+    <string name="got_temperature">The temperature value was retrieved using the sensor type:\t</string>
+    <string name="temperature_value_placement">. The retrieved value is:\t</string>
+    <string name="looking_for_temperature">Looking for the temperature value</string>
+</resources>
